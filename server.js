@@ -19,7 +19,7 @@ const tasks = [
     title:"play",
     done:false
   }
-]
+] 
 
 
 app.get("/", (req, res) => {
@@ -45,6 +45,7 @@ app.get("/tasks",(req, res)=>{
     res.json(tasks)
 })
 
+
 app.get("/tasks/:id",(req, res)=>{
     const id = Number(req.params.id);
     const task = tasks.find((task)=>{
@@ -55,8 +56,25 @@ app.get("/tasks/:id",(req, res)=>{
             error: `Task ${id} not found`
         });
     }
+        res.json(task);
+    })
 
-    res.json(task);
+
+app.post("/tasks",(req,res)=>{
+    const { title } = req.body
+    if (!title.trim()){
+        return res.status(400).json({
+            message: "the title is required"
+        })
+    }
+const id = tasks.length ? Math.max(...tasks.map(task => task.id)) + 1: 1;
+    console.log(id);
+    const task = {id, title, done: false}
+    tasks.push(task)
+    res.status(201).json({
+        message: "created",
+        task
+    })
 })
 
 app.listen(port, ()=>{
