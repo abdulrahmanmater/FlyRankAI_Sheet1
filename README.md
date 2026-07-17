@@ -9,9 +9,10 @@ You can install the dependencies and start the server with a single command:
 ```bash
 npm install && npm start
 ```
-*(If `npm start` is blocked by your system's execution policies, simply run: `npm install && node server.js`)*
 
-Once running, the server operates at `http://localhost:3000`. 
+_(If `npm start` is blocked by your system's execution policies, simply run: `npm install && node server.js`)_
+
+Once running, the server operates at `http://localhost:3000`.
 
 To view and interact with the **Swagger UI documentation**, open your browser and navigate to:  
 **[http://localhost:3000/docs](http://localhost:3000/docs)**
@@ -22,13 +23,13 @@ To view and interact with the **Swagger UI documentation**, open your browser an
 
 All task endpoints are prefixed with `/to-do/tasks`.
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/to-do/tasks` | Retrieve a list of all tasks. |
-| `GET` | `/to-do/tasks/:id` | Retrieve a specific task by its unique ID. |
-| `POST` | `/to-do/tasks` | Create a new task (defaults to `done: false`). |
-| `PATCH` | `/to-do/tasks/:id` | Update an existing task's title and/or status. |
-| `DELETE` | `/to-do/tasks/:id` | Delete a task by its unique ID. |
+| Method   | Endpoint           | Description                                    |
+| -------- | ------------------ | ---------------------------------------------- |
+| `GET`    | `/to-do/tasks`     | Retrieve a list of all tasks.                  |
+| `GET`    | `/to-do/tasks/:id` | Retrieve a specific task by its unique ID.     |
+| `POST`   | `/to-do/tasks`     | Create a new task (defaults to `done: false`). |
+| `PATCH`  | `/to-do/tasks/:id` | Update an existing task's title and/or status. |
+| `DELETE` | `/to-do/tasks/:id` | Delete a task by its unique ID.                |
 
 ---
 
@@ -66,4 +67,3 @@ Keep-Alive: timeout=5
 This API ships with interactive documentation powered by Swagger UI. You can view all schemas, execute live requests, and see server responses in real time.
 
 ![Swagger UI Documentation Screenshot](./swagger-screenshot.png)
-*(Note: Be sure to place your actual screenshot in the project directory as `swagger-screenshot.png`!)*
