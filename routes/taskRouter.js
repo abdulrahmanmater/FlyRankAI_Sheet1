@@ -26,12 +26,13 @@ const db = new Database("./data/tasks.db");
  *                 - $ref: '#/components/schemas/MessageResponse'
  */
 router.get("/", (req, res) => {
-    if (db.length === 0) {
+    const tasks = db.prepare("SELECT * FROM tasks").all();
+    if (tasks.length === 0) {
         return res.json({
             message: "There are no tasks"
         });
     }
-    res.json(db.prepare("SELECT * FROM tasks").all());
+    res.json(tasks);
 });
 
 /**
@@ -115,9 +116,8 @@ router.post("/", (req, res) => {
             message: "the title is required"
         });
     }
-    const id = tasks.length ? Math.max(...tasks.map(task => task.id)) + 1 : 1;
-    const task = { id, title, done: false };
-    tasks.push(task);
+    const task = { title, done: false };
+    db.prepare("INSERT INTO tasks (title, done) VALUES (?, ?)").run(title, 0);
     res.status(201).json({
         message: "created",
         task
