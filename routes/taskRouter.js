@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const tasks = require("../data/data.js");
+const Database = require("better-sqlite3");
+const db = new Database("./data/tasks.db");
+
 
 /**
  * @swagger
@@ -23,12 +26,12 @@ const tasks = require("../data/data.js");
  *                 - $ref: '#/components/schemas/MessageResponse'
  */
 router.get("/", (req, res) => {
-    if (tasks.length === 0) {
+    if (db.length === 0) {
         return res.json({
             message: "There are no tasks"
         });
     }
-    res.json(tasks);
+    res.json(db.prepare("SELECT * FROM tasks").all());
 });
 
 /**
@@ -62,9 +65,7 @@ router.get("/", (req, res) => {
  */
 router.get("/:id", (req, res) => {
     const id = Number(req.params.id);
-    const task = tasks.find((task) => {
-        return task.id === id;
-    });
+    const task = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
     if (!task) {
         return res.status(404).json({
             error: `Task ${id} not found`
@@ -192,7 +193,7 @@ router.patch("/:id", (req, res) => {
             error: "Done must be boolean"
         });
     }
-    
+
     tasks[index] = {
         ...tasks[index],
         ...(title !== undefined && { title }),
