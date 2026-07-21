@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express()
+const db = require("./config/database.js")
 const port = process.env.PORT || 3000
 const taskRouter = require("./routes/taskRouter.js")
 app.use(express.json())
@@ -30,6 +31,6 @@ app.get("/health", (req, res) => {
 })
 
 
-app.listen(port, ()=>{
+app.listen(port, () => {
     console.log(`server is running on port ${port}.....`)
 })
