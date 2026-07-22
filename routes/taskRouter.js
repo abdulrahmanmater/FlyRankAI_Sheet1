@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const tasks = require("../data/data.js");
 const Database = require("better-sqlite3");
 const db = new Database("./data/tasks.db");
 
@@ -165,41 +164,48 @@ router.post("/", (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.patch("/:id", (req, res) => {
+
+router.put("/:id", (req, res) => {
     const { title, done } = req.body;
     const id = Number(req.params.id);
-    const index = tasks.findIndex(task => task.id === id);
-    if (index === -1) {
+
+    const task = db
+        .prepare("SELECT * FROM tasks WHERE id = ?")
+        .get(id);
+
+    if (!task) {
         return res.status(404).json({
             error: `Task ${id} not found`
         });
     }
-    if (title === undefined && done === undefined) {
+
+    if (title === undefined || done === undefined) {
         return res.status(400).json({
-            error: "Nothing to update"
+            error: "Data is invaild"
         });
     }
 
-    if (title !== undefined) {
-        if (typeof title !== "string" || !title.trim()) {
-            return res.status(400).json({
-                error: "Title must be a non-empty string"
-            });
-        }
-    }
-
-    if (done !== undefined && typeof done !== "boolean") {
+    if (typeof title !== "string" || !title.trim()) {
         return res.status(400).json({
-            error: "Done must be boolean"
+            error: "Title must be a non-empty string"
         });
     }
 
-    tasks[index] = {
-        ...tasks[index],
-        ...(title !== undefined && { title }),
-        ...(done !== undefined && { done })
-    };
-    res.status(200).json(tasks[index]);
+    if (done !== 1 && done !== 0) {
+        return res.status(400).json({
+            error: "Done must be 1 or 0"
+        });
+    }
+
+    db.prepare(
+        "UPDATE tasks SET title = ?, done = ? WHERE id = ?"
+    ).run(title, done, id);
+
+    const updatedTask = db
+        .prepare("SELECT * FROM tasks WHERE id = ?")
+        .get(id);
+
+    res.status(200).json(updatedTask);
 });
 
 /**
@@ -229,14 +235,17 @@ router.patch("/:id", (req, res) => {
  */
 router.delete("/:id", (req, res) => {
     const id = Number(req.params.id);
-    const index = tasks.findIndex(task => task.id === id);
-    if (index === -1) {
+    const task = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
+    if (!task) {
         return res.status(404).json({
             error: `Task ${id} not found`
         });
     }
-    tasks.splice(index, 1);
-    res.sendStatus(204);
+    db.prepare("DELETE FROM tasks WHERE id = ?").run(id);
+    res.status(200).json({
+        message: "deleted",
+        task
+    });
 });
 
 module.exports = router;
