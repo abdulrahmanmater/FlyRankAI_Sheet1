@@ -19,6 +19,28 @@ To view and interact with the **Swagger UI documentation**, open your browser an
 
 ---
 
+## 🗄️ Why SQLite?
+
+This project uses **SQLite** (via [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)) as its database for the following reasons:
+
+- **Single file** — The entire database is stored in one portable file (`tasks.db`). No external database server is needed.
+- **Zero setup** — No installation, no configuration, no credentials. Just `npm install` and you're ready.
+- **Survives restarts** — Unlike an in-memory array, data persists across server restarts. Stop the server, start it again — your tasks are still there.
+
+### Where does the database file live?
+
+The database file is located at:
+
+```
+data/tasks.db
+```
+
+- This file is **created automatically** by `config/database.js` on the first server start.
+- It is **git-ignored** (listed in `.gitignore`), so each fresh clone starts with a clean, auto-seeded database containing 3 example tasks.
+- **Do not manually create this file** — `better-sqlite3` must generate it with proper SQLite binary headers.
+
+---
+
 ## 📡 API Endpoints
 
 All task endpoints are prefixed with `/to-do/tasks`.
@@ -28,7 +50,7 @@ All task endpoints are prefixed with `/to-do/tasks`.
 | `GET`    | `/to-do/tasks`     | Retrieve a list of all tasks.                  |
 | `GET`    | `/to-do/tasks/:id` | Retrieve a specific task by its unique ID.     |
 | `POST`   | `/to-do/tasks`     | Create a new task (defaults to `done: false`). |
-| `PATCH`  | `/to-do/tasks/:id` | Update an existing task's title and/or status. |
+| `PUT`    | `/to-do/tasks/:id` | Replace an existing task's title and status.   |
 | `DELETE` | `/to-do/tasks/:id` | Delete a task by its unique ID.                |
 
 ---
@@ -68,13 +90,20 @@ This API ships with interactive documentation powered by Swagger UI. You can vie
 
 ![Swagger UI Documentation Screenshot](./swagger-screenshot.png)
 
-## SQL Practice Checkpoint
+---
 
-I opened the SQLite database directly using DB Browser for SQLite and executed SQL queries manually to understand how the API interacts with the database.
+## 🔬 SQL Practice Checkpoint
 
-Query executed:
-SELECT \* FROM tasks WHERE done = 1;
-Result:
+As part of Stage 4, I opened the SQLite database directly using **DB Browser for SQLite** and executed raw SQL queries to understand how the API interacts with the database at the SQL level.
 
-This query returned all tasks that are marked as completed (done = 1).
-The changes made directly in the database were reflected immediately when calling the API because both the API and DB Browser use the same SQLite database file as the single source of truth.
+![DB Browser for SQLite Screenshot](./db-browser-screenshot.png)
+
+### Example query executed
+
+```sql
+SELECT * FROM tasks WHERE done = 1;
+```
+
+**Result:** This query returned all tasks marked as completed (`done = 1`).
+
+**Key takeaway:** Changes made directly in the database via DB Browser were reflected immediately when calling the API, because both the API and DB Browser read from the same `data/tasks.db` file — SQLite as the single source of truth.
