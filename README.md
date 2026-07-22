@@ -67,3 +67,14 @@ Keep-Alive: timeout=5
 This API ships with interactive documentation powered by Swagger UI. You can view all schemas, execute live requests, and see server responses in real time.
 
 ![Swagger UI Documentation Screenshot](./swagger-screenshot.png)
+
+## SQL Practice Checkpoint
+
+I opened the SQLite database directly using DB Browser for SQLite and executed SQL queries manually to understand how the API interacts with the database.
+
+Query executed:
+SELECT \* FROM tasks WHERE done = 1;
+Result:
+
+This query returned all tasks that are marked as completed (done = 1).
+The changes made directly in the database were reflected immediately when calling the API because both the API and DB Browser use the same SQLite database file as the single source of truth.
